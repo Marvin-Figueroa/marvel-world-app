@@ -1,0 +1,14 @@
+.stories-container {
+  display: grid;
+  place-content: center;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 4rem;
+}
+
+.stories-message {
+  color: crimson;
+  font-size: 2rem;
+}
