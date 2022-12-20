@@ -1,0 +1,17 @@
+.comic-detail {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .comic-detail__section {
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+
+    h2 {
+      color: cornsilk;
+      font-size: 3rem;
+      margin: 4rem 0;
+    }
+  }
+}
