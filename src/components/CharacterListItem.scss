@@ -1,0 +1,33 @@
+.character-item {
+  display: flex;
+  flex-direction: column;
+  background-color: crimson;
+  border-radius: 10px;
+  overflow: hidden;
+  max-width: 40rem;
+}
+
+.character-item__image {
+  flex: 1;
+}
+
+.character-item__name {
+  color: white;
+  flex: 1;
+  font-weight: bold;
+  margin: 1rem auto;
+
+  a {
+    &:link,
+    &:visited {
+      color: white;
+      text-decoration: none;
+    }
+
+    &:active,
+    &:hover {
+      color: darkred;
+      cursor: pointer;
+    }
+  }
+}
