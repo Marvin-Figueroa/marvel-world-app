@@ -1,0 +1,26 @@
+.story-item {
+  background-color: crimson;
+  color: cornsilk;
+  padding: 1rem;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .story-item__title {
+    font-size: 1.8rem;
+    font-weight: bold;
+
+    &:link,
+    &:visited {
+      color: white;
+      text-decoration: none;
+    }
+
+    &:active,
+    &:hover {
+      color: darkred;
+      cursor: pointer;
+    }
+  }
+}
