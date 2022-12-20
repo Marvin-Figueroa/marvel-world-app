@@ -1,0 +1,14 @@
+.characters-container {
+  display: grid;
+  place-content: center;
+  // place-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+
+  gap: 2rem;
+  width: 100%;
+}
+
+.characters-message {
+  color: crimson;
+  font-size: 2rem;
+}
