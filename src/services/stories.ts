@@ -16,12 +16,18 @@ export async function getStoryDetail(storyId: number) {
   }
 }
 
-export async function getPaginatedStories(pageNumber = 1, pageSize = 10) {
+export async function getPaginatedStories(
+  pageNumber = 1,
+  pageSize = 10,
+  character = ''
+) {
   try {
     const storiesResult = await http.get<IAPIResponse<IStory>>(
-      `${process.env.REACT_APP_BASE_API_URL}/stories?limit=${pageSize}&offset=${
-        pageNumber * pageSize
-      }&apikey=${process.env.REACT_APP_API_PUBLIC_KEY}`
+      `${process.env.REACT_APP_BASE_API_URL}/stories?${
+        character !== '' ? `characters=${character}&` : ''
+      }limit=${pageSize}&offset=${pageNumber * pageSize}&apikey=${
+        process.env.REACT_APP_API_PUBLIC_KEY
+      }`
     );
 
     return storiesResult.data.data;
