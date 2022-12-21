@@ -1,4 +1,3 @@
-import React from 'react';
 import { NavLink } from 'react-router-dom';
 import './NavBar.scss';
 
@@ -27,6 +26,11 @@ function NavBar() {
         <li className='nav-item'>
           <NavLink to='/stories' className='nav-link'>
             Stories
+          </NavLink>
+        </li>
+        <li className='nav-item'>
+          <NavLink to='/bookmarks' className='nav-link'>
+            Bookmarks
           </NavLink>
         </li>
       </ul>
