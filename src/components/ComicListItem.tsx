@@ -1,13 +1,38 @@
-import React from 'react';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { IComic } from '../models/comic';
+import { RootState } from '../store/store';
+import * as actions from '../store/comicsSlice';
+
 import './ComicListItem.scss';
+import LikeButton from './LikeButton';
 
 type Props = {
   comic: IComic;
 };
 
 function ComicListItem({ comic }: Props) {
+  const favComics = useSelector(
+    (state: RootState) => state.comics.favoriteComics
+  );
+
+  const [isFavComic, setIsFavComic] = useState(
+    () => favComics.findIndex((favCom) => favCom.id === comic.id) !== -1
+  );
+
+  const dispatch = useDispatch();
+
+  function handleClick() {
+    setIsFavComic((prevIsFavComic) => !prevIsFavComic);
+
+    if (isFavComic) {
+      dispatch(actions.comicUnBookmarked(comic.id));
+    } else {
+      dispatch(actions.comicBookmarked(comic));
+    }
+  }
+
   return (
     <article className='comic-item'>
       <img
@@ -21,6 +46,7 @@ function ComicListItem({ comic }: Props) {
         <p className='comic-item__title'>
           <Link to={`/comics/${comic.id}`}>{comic.title}</Link>
         </p>
+        <LikeButton liked={isFavComic} onToggle={handleClick} />
       </div>
     </article>
   );
