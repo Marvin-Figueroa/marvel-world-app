@@ -6,22 +6,27 @@ import * as actions from '../store/comicsSlice';
 import ComicList from './ComicList';
 import Pagination from './Pagination';
 import { HashLoader } from 'react-spinners';
-import { useSearchParams } from 'react-router-dom';
 import SearchBar from './SearchBar';
+import TagList from './TagList';
+
+const formatTags = [
+  'all',
+  'comic',
+  'magazine',
+  'trade paperback',
+  'hardcover',
+  'digest',
+  'graphic novel',
+  'digital comic',
+  'infinite comic',
+];
 
 function ComicPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-
   const [loadingComics, setLoadingComics] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
-  const [currentPage, setCurrentPage] = useState<number>(
-    Number(searchParams.get('page')) || 1
-  );
   const dispatch = useDispatch();
-  const comics = useSelector((state: RootState) => state.comics);
-  const [search, setSearch] = useState<string>(
-    searchParams.get('search') || ''
-  );
+  const comics = useSelector((state: RootState) => state.comics.comics);
+  const filters = useSelector((state: RootState) => state.comics.filters);
 
   useEffect(() => {
     getPaginatedComics().then((data) => {
@@ -34,10 +39,11 @@ function ComicPage() {
   }, []);
 
   function handlePageChange(pageNumber: number) {
-    setLoadingComics(true);
-    setSearchParams({ search: search, page: pageNumber.toString() });
+    dispatch(actions.comicsFilteredByPage(pageNumber));
 
-    getPaginatedComics(pageNumber, 10, searchParams.get('search') || '').then(
+    setLoadingComics(true);
+
+    getPaginatedComics(pageNumber, 10, filters.title, filters.format).then(
       (data) => {
         if (data) {
           dispatch(actions.comicsLoaded(data.results));
@@ -46,25 +52,38 @@ function ComicPage() {
         setLoadingComics(false);
       }
     );
-    setCurrentPage(pageNumber);
   }
 
   function handleSearch(query: string) {
+    dispatch(actions.comicsFilteredByTitle(query));
     setLoadingComics(true);
-    setSearch(query);
-    getPaginatedComics(1, 10, query).then((data) => {
+
+    getPaginatedComics(1, 10, query, filters.format).then((data) => {
       if (data) {
         dispatch(actions.comicsLoaded(data.results));
         setTotalItems(data.total);
       }
       setLoadingComics(false);
     });
-    setCurrentPage(1);
+  }
+
+  function handleTagChange(tag: string) {
+    dispatch(actions.comicsFilteredByFormat(tag));
+    setLoadingComics(true);
+
+    getPaginatedComics(1, 10, filters.title, tag).then((data) => {
+      if (data) {
+        dispatch(actions.comicsLoaded(data.results));
+        setTotalItems(data.total);
+      }
+      setLoadingComics(false);
+    });
   }
 
   return (
     <>
       <SearchBar searchFor='comic' onSubmitSearch={handleSearch} />
+      <TagList onTagChange={handleTagChange} tags={formatTags} />
       {loadingComics ? (
         <HashLoader color='#dc143c' />
       ) : (
@@ -75,7 +94,7 @@ function ComicPage() {
         pageSize={10}
         onPageChange={handlePageChange}
         siblingCount={1}
-        currentPage={currentPage}
+        currentPage={filters.page || 1}
       />
     </>
   );
