@@ -1,46 +1,44 @@
-# Getting Started with Create React App
+# Homework Week 8
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Description
 
-## Available Scripts
+The project consist of consuming the Marvel API and create pages to show the master/detail of the Characters, Comics and Stories resources. Add filtering functionality in every resource displayed and the possibility to bookmark/unbookmark every resource item, as well as the possibility to hide/expose every resource item from all pages.
 
-In the project directory, you can run:
+## Live Site
 
-### `npm start`
+[Vercel Deployment](https://homework-week-8.vercel.app/)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Built With
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- Semantic HTML5 markup
+- CSS Flexbox
+- CSS Grid
+- Desktop-First approach
+- Sass / Scss
+- React JS
+- React Router
+- React Hooks / Custom Hooks
+- Redux
+- react-icons
+- react-spinner
+- TypeScript
 
-### `npm test`
+## Visuals
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**Screenshots Desktop #1**
+![](./screenshots/screenshot-desktop-1.png)
 
-### `npm run build`
+**Screenshots Desktop #2**
+![](./screenshots/screenshot-desktop-2.png)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Screenshots Desktop #3**
+![](./screenshots/screenshot-desktop-3.png)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**Screenshots Desktop #4**
+![](./screenshots/screenshot-desktop-4.png)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+**Screenshots Desktop #5**
+![](./screenshots/screenshot-desktop-5.png)
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+**Screenshots Desktop #6**
+![](./screenshots/screenshot-desktop-6.png)
