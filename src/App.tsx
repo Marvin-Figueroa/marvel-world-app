@@ -8,6 +8,7 @@ import './App.scss';
 import CharacterDetail from './components/CharacterDetail';
 import ComicDetail from './components/ComicDetail';
 import StoryDetail from './components/StoryDetail';
+import Bookmarks from './components/Bookmarks';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path='/comics/:id' element={<ComicDetail />} />
           <Route path='/stories' element={<StoryPage />} />
           <Route path='/stories/:id' element={<StoryDetail />} />
+          <Route path='/bookmarks' element={<Bookmarks />} />
           <Route path='*' element={<NotFound />} />
         </Routes>
       </BrowserRouter>
