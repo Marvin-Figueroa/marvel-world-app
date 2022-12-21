@@ -10,6 +10,10 @@ import ComicList from './ComicList';
 import ItemDetail from './ItemDetail';
 import StoryList from './StoryList';
 import { getCharacterDetail } from '../services/characters';
+import LikeButton from './LikeButton';
+import { useDispatch, useSelector } from 'react-redux';
+import * as actions from '../store/charactersSlice';
+import { RootState } from '../store/store';
 import './CharacterDetail.scss';
 
 function CharacterDetail() {
@@ -20,6 +24,14 @@ function CharacterDetail() {
   const [loadingCharacter, setLoadingCharacter] = useState(true);
   const [loadingStories, setLoadingStories] = useState(true);
   const { id } = useParams();
+
+  const favCharacters = useSelector(
+    (state: RootState) => state.characters.favoriteCharacters
+  );
+  const [isFavCharacter, setIsFavCharacter] = useState(
+    () => favCharacters.findIndex((favChar) => favChar.id === Number(id)) !== -1
+  );
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getCharacterDetail(Number(id)).then((data) => {
@@ -44,16 +56,31 @@ function CharacterDetail() {
     });
   }, []);
 
+  function handleClick() {
+    setIsFavCharacter((prevIsFavCharacter) => !prevIsFavCharacter);
+
+    if (isFavCharacter) {
+      dispatch(actions.characterUnBookmarked(Number(id)));
+    } else {
+      if (character) {
+        dispatch(actions.characterBookmarked(character));
+      }
+    }
+  }
+
   return (
     <main className='character-detail'>
       {loadingCharacter ? (
         <HashLoader color='#dc143c' />
       ) : (
-        <ItemDetail
-          thumbnail={character?.thumbnail}
-          title={character?.name}
-          description={character?.description}
-        />
+        <div className='character-detail__header'>
+          <ItemDetail
+            thumbnail={character?.thumbnail}
+            title={character?.name}
+            description={character?.description}
+          />
+          <LikeButton liked={isFavCharacter} onToggle={handleClick} />
+        </div>
       )}
 
       <section className='character-detail__section'>
