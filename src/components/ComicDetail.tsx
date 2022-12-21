@@ -11,6 +11,11 @@ import StoryList from './StoryList';
 import './ComicDetail.scss';
 import { getComicDetail } from '../services/comics';
 import { IComic } from '../models/comic';
+import LikeButton from './LikeButton';
+import { useDispatch, useSelector } from 'react-redux';
+import * as actions from '../store/comicsSlice';
+import { RootState } from '../store/store';
+import ImageGallery from './ImageGallery';
 
 function ComicDetail() {
   const [comic, setComic] = useState<IComic | null>(null);
@@ -20,6 +25,14 @@ function ComicDetail() {
   const [loadingStories, setLoadingStories] = useState(true);
   const [loadingComic, setLoadingComic] = useState(true);
   const { id } = useParams();
+
+  const favComics = useSelector(
+    (state: RootState) => state.comics.favoriteComics
+  );
+  const [isFavComic, setIsFavComic] = useState(
+    () => favComics.findIndex((favComic) => favComic.id === Number(id)) !== -1
+  );
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getComicDetail(Number(id)).then((data) => {
@@ -44,17 +57,37 @@ function ComicDetail() {
     });
   }, []);
 
+  function handleClick() {
+    setIsFavComic((prevIsFavComic) => !prevIsFavComic);
+
+    if (isFavComic) {
+      dispatch(actions.comicUnBookmarked(Number(id)));
+    } else {
+      if (comic) {
+        dispatch(actions.comicBookmarked(comic));
+      }
+    }
+  }
+
   return (
     <main className='comic-detail'>
       {loadingComic ? (
         <HashLoader color='#dc143c' />
       ) : (
-        <ItemDetail
-          thumbnail={comic?.thumbnail}
-          title={comic?.title}
-          description={comic?.description}
-          images={comic?.images}
-        />
+        <div className='comic-detail__header'>
+          <ItemDetail
+            thumbnail={comic?.thumbnail}
+            title={comic?.title}
+            description={comic?.description}
+          />
+          <LikeButton liked={isFavComic} onToggle={handleClick} />
+          {comic?.images && (
+            <div className='comic-detail__images'>
+              <h2 className='image-galley__title'>Images</h2>
+              <ImageGallery images={comic.images} />
+            </div>
+          )}
+        </div>
       )}
       <section className='comic-detail__section'>
         <h2>Comic&apos;s Characters</h2>
