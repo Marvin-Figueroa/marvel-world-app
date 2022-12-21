@@ -12,6 +12,7 @@ interface initialStateType {
   characters: ICharacter[];
   filters: filtersType;
   favoriteCharacters: ICharacter[];
+  hiddenCharacters: number[];
 }
 
 const initialState: initialStateType = {
@@ -23,6 +24,7 @@ const initialState: initialStateType = {
     page: 1,
   },
   favoriteCharacters: [],
+  hiddenCharacters: [],
 };
 
 // Action types
@@ -34,6 +36,8 @@ const CHARACTERS_FILTERED_BY_PAGE = 'characters/charactersFilteredByPage';
 const CHARACTER_BOOKMARKED = 'characters/characterBookmarked';
 const CHARACTER_UNBOOKMARKED = 'characters/characterUnBookmarked';
 const CHARACTERS_UNBOOKMARKED_ALL = 'characters/charactersUnBookmarkedAll';
+const CHARACTER_HIDDEN = 'characters/characterHidden';
+const CHARACTERS_EXPOSED_ALL = 'characters/charactersExposedAll';
 
 // Action Creators
 export function charactersLoaded(characters: ICharacter[]) {
@@ -91,6 +95,19 @@ export function charactersUnBookmarkedAll() {
   };
 }
 
+export function characterHidden(characterId: number) {
+  return {
+    type: CHARACTER_HIDDEN,
+    payload: characterId,
+  };
+}
+
+export function charactersExposedAll() {
+  return {
+    type: CHARACTERS_EXPOSED_ALL,
+  };
+}
+
 // Reducer
 export default function charactersReducer(
   state = initialState,
@@ -141,6 +158,18 @@ export default function charactersReducer(
       return {
         ...state,
         favoriteCharacters: [],
+      };
+
+    case CHARACTER_HIDDEN:
+      return {
+        ...state,
+        hiddenCharacters: [...state.hiddenCharacters, action.payload],
+      };
+
+    case CHARACTERS_EXPOSED_ALL:
+      return {
+        ...state,
+        hiddenCharacters: [],
       };
 
     default:
