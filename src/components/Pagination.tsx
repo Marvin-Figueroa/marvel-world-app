@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import './Pagination.scss';
