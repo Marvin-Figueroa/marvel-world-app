@@ -1,16 +1,13 @@
-import React from 'react';
 import { Thumbnail } from '../models/thumbnail';
-import ImageGallery from './ImageGallery';
 import './ItemDetail.scss';
 
 type Props = {
   thumbnail?: Thumbnail | null;
   title?: string;
   description?: string;
-  images?: Thumbnail[];
 };
 
-function ItemDetail({ thumbnail, title, description, images }: Props) {
+function ItemDetail({ thumbnail, title, description }: Props) {
   return (
     <>
       <div className='item'>
@@ -30,12 +27,6 @@ function ItemDetail({ thumbnail, title, description, images }: Props) {
           </p>
         </div>
       </div>
-      {images && (
-        <>
-          <h2 className='image-galley__title'>Images</h2>
-          <ImageGallery images={images} />
-        </>
-      )}
     </>
   );
 }
