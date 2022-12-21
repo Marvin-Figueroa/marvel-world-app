@@ -11,6 +11,7 @@ interface initialStateType {
   comics: IComic[];
   filters: filtersType;
   favoriteComics: IComic[];
+  hiddenComics: number[];
 }
 
 const initialState: initialStateType = {
@@ -21,6 +22,7 @@ const initialState: initialStateType = {
     page: 1,
   },
   favoriteComics: [],
+  hiddenComics: [],
 };
 
 // Action types
@@ -31,6 +33,8 @@ const COMICS_FILTERED_BY_PAGE = 'comics/comicsFilteredByPage';
 const COMIC_BOOKMARKED = 'comics/comicBookmarked';
 const COMIC_UNBOOKMARKED = 'comics/comicUnBookmarked';
 const COMICS_UNBOOKMARKED_ALL = 'comics/comicsUnBookmarkedAll';
+const COMIC_HIDDEN = 'comics/comicHidden';
+const COMICS_EXPOSED_ALL = 'comics/comicsExposedAll';
 
 // Action Creators
 export function comicsLoaded(comics: IComic[]) {
@@ -81,6 +85,19 @@ export function comicsUnBookmarkedAll() {
   };
 }
 
+export function comicHidden(comicId: number) {
+  return {
+    type: COMIC_HIDDEN,
+    payload: comicId,
+  };
+}
+
+export function comicsExposedAll() {
+  return {
+    type: COMICS_EXPOSED_ALL,
+  };
+}
+
 // Reducer
 export default function comicsReducer(
   state = initialState,
@@ -125,6 +142,18 @@ export default function comicsReducer(
       return {
         ...state,
         favoriteComics: [],
+      };
+
+    case COMIC_HIDDEN:
+      return {
+        ...state,
+        hiddenComics: [...state.hiddenComics, action.payload],
+      };
+
+    case COMICS_EXPOSED_ALL:
+      return {
+        ...state,
+        hiddenComics: [],
       };
 
     default:
