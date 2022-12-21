@@ -17,11 +17,14 @@ export async function getComicDetail(comicId: number) {
 export async function getPaginatedComics(
   pageNumber = 1,
   pageSize = 10,
-  search = ''
+  search = '',
+  format = ''
 ) {
   try {
     const comicsResult = await http.get<IAPIResponse<IComic>>(
       `${process.env.REACT_APP_BASE_API_URL}/comics?${
+        format !== '' && format !== 'all' ? `format=${format}&` : ''
+      }${
         search.trim().length > 0 ? `titleStartsWith=${search.trim()}&` : ''
       }limit=${pageSize}&offset=${(pageNumber - 1) * pageSize}&apikey=${
         process.env.REACT_APP_API_PUBLIC_KEY
