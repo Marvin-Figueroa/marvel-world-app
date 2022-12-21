@@ -11,6 +11,7 @@ interface initialStateType {
   stories: IStory[];
   filters: filtersType;
   favoriteStories: IStory[];
+  hiddenStories: number[];
 }
 
 const initialState: initialStateType = {
@@ -20,6 +21,7 @@ const initialState: initialStateType = {
     page: 1,
   },
   favoriteStories: [],
+  hiddenStories: [],
 };
 
 // Action types
@@ -29,6 +31,8 @@ const STORIES_FILTERED_BY_PAGE = 'stories/storiesFilteredByPage';
 const STORY_BOOKMARKED = 'stories/storyBookmarked';
 const STORY_UNBOOKMARKED = 'stories/storyUnBookmarked';
 const STORIES_UNBOOKMARKED_ALL = 'stories/storiesUnBookmarkedAll';
+const STORY_HIDDEN = 'stories/storyHidden';
+const STORIES_EXPOSED_ALL = 'stories/storiesExposedAll';
 
 // Action Creators
 export function storiesLoaded(stories: IStory[]) {
@@ -72,6 +76,19 @@ export function storiesUnBookmarkedAll() {
   };
 }
 
+export function storyHidden(storyId: number) {
+  return {
+    type: STORY_HIDDEN,
+    payload: storyId,
+  };
+}
+
+export function storiesExposedAll() {
+  return {
+    type: STORIES_EXPOSED_ALL,
+  };
+}
+
 // Reducer
 export default function storiesReducer(
   state = initialState,
@@ -111,6 +128,19 @@ export default function storiesReducer(
         ...state,
         favoriteStories: [],
       };
+
+    case STORY_HIDDEN:
+      return {
+        ...state,
+        hiddenStories: [...state.hiddenStories, action.payload],
+      };
+
+    case STORIES_EXPOSED_ALL:
+      return {
+        ...state,
+        hiddenStories: [],
+      };
+
     default:
       return state;
   }
