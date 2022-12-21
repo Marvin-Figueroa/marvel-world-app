@@ -1,24 +1,18 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import useDebounce from '../hooks/useDebounce';
-
 import './SearchBar.scss';
-
 interface Props {
   searchFor: string;
   onSubmitSearch: (searchQuery: string) => void;
 }
 
 const SearchBar = ({ onSubmitSearch, searchFor }: Props) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const [search, setSearch] = useState(searchParams.get('search') || '');
-
+  const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 1000);
 
   useEffect(() => {
     onSubmitSearch(search);
-    setSearchParams({ search: debouncedSearch, page: '1' });
   }, [debouncedSearch]);
 
   return (
