@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPaginatedCharacters } from '../services/characters';
 import { RootState } from '../store/store';
@@ -6,26 +6,57 @@ import * as actions from '../store/charactersSlice';
 import CharacterList from './CharacterList';
 import Pagination from './Pagination';
 import { HashLoader } from 'react-spinners';
-import { useSearchParams } from 'react-router-dom';
 import SearchBar from './SearchBar';
 import './CharacterPage.scss';
+import FilterSelect from './FilterSelect';
+
+const comicsWithCharacters = ['1994', '1158', '1332', '1590', '1689', '1749'];
+
+const storiesWithCharacters = ['477', '479', '488', '489', '498', '535'];
 
 function CharacterPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [search, setSearch] = useState<string>(
-    searchParams.get('search') || ''
-  );
-
   const [loadingCharacters, setLoadingCharacters] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
-  const [currentPage, setCurrentPage] = useState<number>(
-    Number(searchParams.get('page')) || 1
-  );
   const dispatch = useDispatch();
-  const characters = useSelector((state: RootState) => state.characters);
+  const characters = useSelector(
+    (state: RootState) => state.characters.characters
+  );
+  const filters = useSelector((state: RootState) => state.characters.filters);
 
   useEffect(() => {
-    getPaginatedCharacters(1, 10, searchParams.get('search') || '').then(
+    getPaginatedCharacters().then((data) => {
+      if (data) {
+        dispatch(actions.charactersLoaded(data.results));
+        setTotalItems(data.total);
+      }
+      setLoadingCharacters(false);
+    });
+  }, []);
+
+  function handlePageChange(pageNumber: number) {
+    dispatch(actions.charactersFilteredByPage(pageNumber));
+    setLoadingCharacters(true);
+
+    getPaginatedCharacters(
+      pageNumber,
+      10,
+      filters.name,
+      filters.comic,
+      filters.story
+    ).then((data) => {
+      if (data) {
+        dispatch(actions.charactersLoaded(data.results));
+        setTotalItems(data.total);
+      }
+      setLoadingCharacters(false);
+    });
+  }
+
+  function handleSearch(query: string) {
+    dispatch(actions.charactersFilteredByName(query));
+    setLoadingCharacters(true);
+
+    getPaginatedCharacters(1, 10, query, filters.comic, filters.story).then(
       (data) => {
         if (data) {
           dispatch(actions.charactersLoaded(data.results));
@@ -34,42 +65,60 @@ function CharacterPage() {
         setLoadingCharacters(false);
       }
     );
-  }, []);
-
-  function handlePageChange(pageNumber: number) {
-    setLoadingCharacters(true);
-    setSearchParams({ search: search, page: pageNumber.toString() });
-
-    getPaginatedCharacters(
-      pageNumber,
-      10,
-      searchParams.get('search') || ''
-    ).then((data) => {
-      if (data) {
-        dispatch(actions.charactersLoaded(data.results));
-        setTotalItems(data.total);
-      }
-      setLoadingCharacters(false);
-    });
-    setCurrentPage(pageNumber);
   }
 
-  function handleSearch(query: string) {
+  function handleComicSelectFilterChange(comic: string) {
+    const validatedComic = comic === 'Select an option' ? '' : comic;
+
+    dispatch(actions.charactersFilteredByComic(validatedComic));
+    dispatch(actions.charactersFilteredByStory(''));
     setLoadingCharacters(true);
-    setSearch(query);
-    getPaginatedCharacters(1, 10, query).then((data) => {
-      if (data) {
-        dispatch(actions.charactersLoaded(data.results));
-        setTotalItems(data.total);
+
+    getPaginatedCharacters(1, 10, filters.name, validatedComic, '').then(
+      (data) => {
+        if (data) {
+          dispatch(actions.charactersLoaded(data.results));
+          setTotalItems(data.total);
+        }
+        setLoadingCharacters(false);
       }
-      setLoadingCharacters(false);
-    });
-    setCurrentPage(1);
+    );
+  }
+
+  function handleStorySelectFilterChange(story: string) {
+    const validatedStory = story === 'Select an option' ? '' : story;
+    dispatch(actions.charactersFilteredByStory(validatedStory));
+    dispatch(actions.charactersFilteredByComic(''));
+    setLoadingCharacters(true);
+
+    getPaginatedCharacters(1, 10, filters.name, '', validatedStory).then(
+      (data) => {
+        if (data) {
+          dispatch(actions.charactersLoaded(data.results));
+          setTotalItems(data.total);
+        }
+        setLoadingCharacters(false);
+      }
+    );
   }
 
   return (
     <>
       <SearchBar searchFor='character' onSubmitSearch={handleSearch} />
+      <div className='filters-container'>
+        <FilterSelect
+          label='comic'
+          value={filters.comic}
+          options={comicsWithCharacters}
+          onFilterChange={handleComicSelectFilterChange}
+        />
+        <FilterSelect
+          label='story'
+          value={filters.story}
+          options={storiesWithCharacters}
+          onFilterChange={handleStorySelectFilterChange}
+        />
+      </div>
       {loadingCharacters ? (
         <HashLoader color='#dc143c' />
       ) : (
@@ -80,7 +129,7 @@ function CharacterPage() {
         pageSize={10}
         onPageChange={handlePageChange}
         siblingCount={1}
-        currentPage={currentPage}
+        currentPage={Number(filters.page) || 1}
       />
     </>
   );
