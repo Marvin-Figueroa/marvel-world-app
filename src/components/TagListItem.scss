@@ -1,0 +1,19 @@
+.tag__label {
+  padding: 1rem;
+  border-radius: 10px;
+  font-size: 1.6rem;
+  font-weight: bold;
+  background-color: white;
+  color: crimson;
+  cursor: pointer;
+}
+
+.tag__label:hover,
+.tag__input:checked + .tag__label {
+  background-color: crimson;
+  color: white;
+}
+
+.tag__input {
+  visibility: hidden;
+}
