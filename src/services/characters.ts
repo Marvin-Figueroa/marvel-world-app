@@ -20,12 +20,16 @@ export async function getCharacterDetail(characterId: number) {
 export async function getPaginatedCharacters(
   pageNumber = 1,
   pageSize = 10,
-  search = ''
+  search = '',
+  comics = '',
+  stories = ''
 ) {
   try {
     const charactersResult = await http.get<IAPIResponse<ICharacter>>(
       `${process.env.REACT_APP_BASE_API_URL}/characters?${
-        search.trim().length > 0 ? `nameStartsWith=${search.trim()}&` : ''
+        search.trim() !== '' ? `nameStartsWith=${search.trim()}&` : ''
+      }${comics !== '' ? `comics=${comics}&` : ''}${
+        stories !== '' ? `stories=${stories}&` : ''
       }limit=${pageSize}&offset=${(pageNumber - 1) * pageSize}&apikey=${
         process.env.REACT_APP_API_PUBLIC_KEY
       }`
