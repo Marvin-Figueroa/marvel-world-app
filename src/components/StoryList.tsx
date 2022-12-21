@@ -1,4 +1,3 @@
-import React from 'react';
 import { IStory } from '../models/story';
 import StoryListItem from './StoryListItem';
 import './StoryList.scss';
