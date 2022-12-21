@@ -14,14 +14,18 @@
 }
 
 .comic-item__text {
+  text-align: center;
   padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
 .comic-item__title {
   color: white;
   flex: 1;
 
-  // FIXME: The three dots are not showing when cutting the text to 1 line...
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
