@@ -25,7 +25,7 @@ export async function getPaginatedStories(
     const storiesResult = await http.get<IAPIResponse<IStory>>(
       `${process.env.REACT_APP_BASE_API_URL}/stories?${
         character !== '' ? `characters=${character}&` : ''
-      }limit=${pageSize}&offset=${pageNumber * pageSize}&apikey=${
+      }limit=${pageSize}&offset=${(pageNumber - 1) * pageSize}&apikey=${
         process.env.REACT_APP_API_PUBLIC_KEY
       }`
     );
