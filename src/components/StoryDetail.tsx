@@ -10,11 +10,12 @@ import { useParams } from 'react-router-dom';
 import { getCharactersByStory } from '../services/characters';
 import { getComicsByStory } from '../services/comics';
 import { HashLoader } from 'react-spinners';
-import LikeButton from './LikeButton';
+import ToggleButton from './ToggleButton';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../store/storiesSlice';
 import { RootState } from '../store/store';
 import './StoryDetail.scss';
+import { FaBookmark, FaRegBookmark } from 'react-icons/fa';
 
 function StoryDetail() {
   const [story, setStory] = useState<IStory | null>(null);
@@ -79,7 +80,12 @@ function StoryDetail() {
             title={story?.title}
             description={story?.description}
           />
-          <LikeButton liked={isFavStory} onToggle={handleClick} />
+          <ToggleButton
+            toggleOn={isFavStory}
+            onToggle={handleClick}
+            showOnToggleOn={<FaBookmark />}
+            showOnToggleOff={<FaRegBookmark />}
+          />
         </div>
       )}
 

@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ICharacter } from '../models/character';
 import './CharacterListItem.scss';
-import LikeButton from './LikeButton';
+import ToggleButton from './ToggleButton';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../store/charactersSlice';
 import { RootState } from '../store/store';
+import { FaBookmark, FaRegBookmark } from 'react-icons/fa';
 
 type Props = {
   character: ICharacter;
@@ -46,7 +47,12 @@ function CharacterListItem({ character }: Props) {
         <p className='character-item__name'>
           <Link to={`/characters/${character.id}`}>{character.name}</Link>
         </p>
-        <LikeButton liked={isFavCharacter} onToggle={handleClick} />
+        <ToggleButton
+          toggleOn={isFavCharacter}
+          onToggle={handleClick}
+          showOnToggleOn={<FaBookmark />}
+          showOnToggleOff={<FaRegBookmark />}
+        />
       </div>
     </article>
   );

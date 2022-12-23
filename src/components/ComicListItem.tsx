@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 import { IComic } from '../models/comic';
 import { RootState } from '../store/store';
 import * as actions from '../store/comicsSlice';
-
+import ToggleButton from './ToggleButton';
 import './ComicListItem.scss';
-import LikeButton from './LikeButton';
+import { FaBookmark, FaRegBookmark } from 'react-icons/fa';
 
 type Props = {
   comic: IComic;
@@ -46,7 +46,12 @@ function ComicListItem({ comic }: Props) {
         <p className='comic-item__title'>
           <Link to={`/comics/${comic.id}`}>{comic.title}</Link>
         </p>
-        <LikeButton liked={isFavComic} onToggle={handleClick} />
+        <ToggleButton
+          toggleOn={isFavComic}
+          onToggle={handleClick}
+          showOnToggleOn={<FaBookmark />}
+          showOnToggleOff={<FaRegBookmark />}
+        />
       </div>
     </article>
   );

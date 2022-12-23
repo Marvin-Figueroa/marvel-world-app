@@ -11,11 +11,12 @@ import StoryList from './StoryList';
 import './ComicDetail.scss';
 import { getComicDetail } from '../services/comics';
 import { IComic } from '../models/comic';
-import LikeButton from './LikeButton';
+import ToggleButton from './ToggleButton';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../store/comicsSlice';
 import { RootState } from '../store/store';
 import ImageGallery from './ImageGallery';
+import { FaBookmark, FaRegBookmark } from 'react-icons/fa';
 
 function ComicDetail() {
   const [comic, setComic] = useState<IComic | null>(null);
@@ -80,7 +81,12 @@ function ComicDetail() {
             title={comic?.title}
             description={comic?.description}
           />
-          <LikeButton liked={isFavComic} onToggle={handleClick} />
+          <ToggleButton
+            toggleOn={isFavComic}
+            onToggle={handleClick}
+            showOnToggleOn={<FaBookmark />}
+            showOnToggleOff={<FaRegBookmark />}
+          />
           {comic?.images && (
             <div className='comic-detail__images'>
               <h2 className='image-galley__title'>Images</h2>

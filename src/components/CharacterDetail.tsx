@@ -10,10 +10,11 @@ import ComicList from './ComicList';
 import ItemDetail from './ItemDetail';
 import StoryList from './StoryList';
 import { getCharacterDetail } from '../services/characters';
-import LikeButton from './LikeButton';
+import ToggleButton from './ToggleButton';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../store/charactersSlice';
 import { RootState } from '../store/store';
+import { FaBookmark, FaRegBookmark } from 'react-icons/fa';
 import './CharacterDetail.scss';
 
 function CharacterDetail() {
@@ -79,7 +80,12 @@ function CharacterDetail() {
             title={character?.name}
             description={character?.description}
           />
-          <LikeButton liked={isFavCharacter} onToggle={handleClick} />
+          <ToggleButton
+            toggleOn={isFavCharacter}
+            onToggle={handleClick}
+            showOnToggleOn={<FaBookmark />}
+            showOnToggleOff={<FaRegBookmark />}
+          />
         </div>
       )}
 
