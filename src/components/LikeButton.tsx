@@ -8,7 +8,10 @@ type Props = {
 
 function LikeButton({ liked, onToggle }: Props) {
   return (
-    <button onClick={onToggle} className='like-button'>
+    <button
+      onClick={onToggle}
+      className='like-button'
+      title={liked ? 'Remove from bookmarks' : 'Add to bookmarks'}>
       {liked ? <FaHeart /> : <FaRegHeart />}
     </button>
   );
