@@ -12,17 +12,11 @@ import './Bookmarks.scss';
 function Bookmarks() {
   const dispatch = useDispatch();
 
-  const favCharacters = useSelector(
-    (state: RootState) => state.characters.favoriteCharacters
-  );
-  const favComics = useSelector(
-    (state: RootState) => state.comics.favoriteComics
-  );
-  const favStories = useSelector(
-    (state: RootState) => state.stories.favoriteStories
-  );
+  const characters = useSelector((state: RootState) => state.characters);
+  const comics = useSelector((state: RootState) => state.comics);
+  const stories = useSelector((state: RootState) => state.stories);
 
-  function handleClick() {
+  function handleRemoveBookmarks() {
     dispatch(actionsCharacters.charactersUnBookmarkedAll());
     dispatch(actionsComics.comicsUnBookmarkedAll());
     dispatch(actionsStories.storiesUnBookmarkedAll());
@@ -30,20 +24,27 @@ function Bookmarks() {
 
   return (
     <main className='bookmarks-container'>
-      <button className='bookmarks-remove-btn' onClick={handleClick}>
+      <button
+        disabled={
+          characters.nonHiddenFavoriteCharacters?.length === 0 &&
+          comics.nonHiddenFavComics?.length === 0 &&
+          stories.nonHiddenFavStories?.length === 0
+        }
+        className='bookmarks-remove-btn'
+        onClick={handleRemoveBookmarks}>
         Remove All Bookmarks
       </button>
       <section className='characters-section'>
         <h2>Favorite Characters</h2>
-        {<CharacterList characters={favCharacters} />}
+        {<CharacterList characters={characters.nonHiddenFavoriteCharacters} />}
       </section>
       <section className='comics-section'>
         <h2>Favorite Comics</h2>
-        {<ComicList comics={favComics} />}
+        {<ComicList comics={comics.nonHiddenFavComics} />}
       </section>
       <section className='stories-section'>
         <h2>Favorite Stories</h2>
-        {<StoryList stories={favStories} />}
+        {<StoryList stories={stories.nonHiddenFavStories} />}
       </section>
     </main>
   );
