@@ -4,6 +4,7 @@ import { HashLoader } from 'react-spinners';
 import { getPaginatedStories } from '../services/stories';
 import { RootState } from '../store/store';
 import * as actions from '../store/storiesSlice';
+import Button from './Button';
 import FilterSelect from './FilterSelect';
 import Pagination from './Pagination';
 import StoryList from './StoryList';
@@ -21,8 +22,8 @@ function StoryPage() {
   const [loadingStories, setLoadingStories] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
   const dispatch = useDispatch();
-  const stories = useSelector((state: RootState) => state.stories.stories);
-  const filters = useSelector((state: RootState) => state.stories.filters);
+  const stories = useSelector((state: RootState) => state.stories);
+  const filters = stories.filters;
 
   useEffect(() => {
     getPaginatedStories().then((data) => {
@@ -38,7 +39,7 @@ function StoryPage() {
     dispatch(actions.storiesFilteredByPage(pageNumber));
     setLoadingStories(true);
 
-    getPaginatedStories(pageNumber, 10, filters.character).then((data) => {
+    getPaginatedStories(pageNumber, 20, filters.character).then((data) => {
       if (data) {
         dispatch(actions.storiesLoaded(data.results));
         setTotalItems(data.total);
@@ -55,7 +56,7 @@ function StoryPage() {
 
     setLoadingStories(true);
 
-    getPaginatedStories(1, 10, validatedCharacter).then((data) => {
+    getPaginatedStories(1, 20, validatedCharacter).then((data) => {
       if (data) {
         dispatch(actions.storiesLoaded(data.results));
         setTotalItems(data.total);
@@ -72,15 +73,21 @@ function StoryPage() {
         options={charactersWithStories}
         onFilterChange={handleCharacterSelectFilterChange}
       />
-      {loadingStories ? (
-        <HashLoader color='#dc143c' />
-      ) : (
-        <StoryList stories={stories} />
+      {stories.hiddenStories.length > 0 && (
+        <Button onClick={() => dispatch(actions.storiesExposedAll())}>
+          Show Hidden
+        </Button>
       )}
-
+      {loadingStories ? (
+        <div className='loader-container'>
+          <HashLoader color='#dc143c' />
+        </div>
+      ) : (
+        <StoryList stories={stories.nonHiddenStories} />
+      )}
       <Pagination
         totalItems={totalItems}
-        pageSize={10}
+        pageSize={20}
         onPageChange={handlePageChange}
         siblingCount={1}
         currentPage={filters.page || 1}
