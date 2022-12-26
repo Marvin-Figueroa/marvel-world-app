@@ -18,7 +18,7 @@ export async function getStoryDetail(storyId: number) {
 
 export async function getPaginatedStories(
   pageNumber = 1,
-  pageSize = 10,
+  pageSize = 20,
   character = ''
 ) {
   try {
