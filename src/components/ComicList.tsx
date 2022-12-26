@@ -7,7 +7,7 @@ type Props = {
 };
 
 function ComicList({ comics }: Props) {
-  return comics.length > 0 ? (
+  return comics?.length > 0 ? (
     <div className='comics-container'>
       {comics?.map((comic) => (
         <ComicListItem key={comic.id} comic={comic} />
