@@ -1,4 +1,3 @@
-import { AnyAction } from 'redux';
 import { ICharacter } from '../models/character';
 
 // Initial State
@@ -12,7 +11,9 @@ interface initialStateType {
   characters: ICharacter[];
   filters: filtersType;
   favoriteCharacters: ICharacter[];
-  hiddenCharacters: number[];
+  hiddenCharacters: ICharacter[];
+  nonHiddenCharacters: ICharacter[];
+  nonHiddenFavoriteCharacters: ICharacter[];
 }
 
 const initialState: initialStateType = {
@@ -25,9 +26,12 @@ const initialState: initialStateType = {
   },
   favoriteCharacters: [],
   hiddenCharacters: [],
+  nonHiddenCharacters: [],
+  nonHiddenFavoriteCharacters: [],
 };
 
 // Action types
+
 const CHARACTERS_LOADED = 'characters/charactersLoaded';
 const CHARACTERS_FILTERED_BY_NAME = 'characters/charactersFilteredByName';
 const CHARACTERS_FILTERED_BY_COMIC = 'characters/charactersFilteredByComic';
@@ -38,6 +42,18 @@ const CHARACTER_UNBOOKMARKED = 'characters/characterUnBookmarked';
 const CHARACTERS_UNBOOKMARKED_ALL = 'characters/charactersUnBookmarkedAll';
 const CHARACTER_HIDDEN = 'characters/characterHidden';
 const CHARACTERS_EXPOSED_ALL = 'characters/charactersExposedAll';
+
+type CharacterActionType =
+  | { type: 'characters/charactersLoaded'; payload: ICharacter[] }
+  | { type: 'characters/charactersFilteredByName'; payload: string }
+  | { type: 'characters/charactersFilteredByComic'; payload: string }
+  | { type: 'characters/charactersFilteredByStory'; payload: string }
+  | { type: 'characters/charactersFilteredByPage'; payload: number }
+  | { type: 'characters/characterBookmarked'; payload: ICharacter }
+  | { type: 'characters/characterUnBookmarked'; payload: number }
+  | { type: 'characters/charactersUnBookmarkedAll' }
+  | { type: 'characters/characterHidden'; payload: ICharacter }
+  | { type: 'characters/charactersExposedAll' };
 
 // Action Creators
 export function charactersLoaded(characters: ICharacter[]) {
@@ -95,10 +111,10 @@ export function charactersUnBookmarkedAll() {
   };
 }
 
-export function characterHidden(characterId: number) {
+export function characterHidden(character: ICharacter) {
   return {
     type: CHARACTER_HIDDEN,
-    payload: characterId,
+    payload: character,
   };
 }
 
@@ -111,11 +127,20 @@ export function charactersExposedAll() {
 // Reducer
 export default function charactersReducer(
   state = initialState,
-  action: AnyAction
+  action: CharacterActionType
 ): initialStateType {
   switch (action.type) {
     case CHARACTERS_LOADED:
-      return { ...state, characters: action.payload };
+      return {
+        ...state,
+        characters: action.payload,
+        nonHiddenCharacters: action.payload.filter(
+          (char) =>
+            state.hiddenCharacters.findIndex(
+              (hiddenChar) => char.id === hiddenChar.id
+            ) === -1
+        ),
+      };
 
     case CHARACTERS_FILTERED_BY_NAME:
       return {
@@ -141,28 +166,41 @@ export default function charactersReducer(
     case CHARACTER_BOOKMARKED:
       return {
         ...state,
+        nonHiddenFavoriteCharacters: [
+          ...state.nonHiddenFavoriteCharacters,
+          action.payload,
+        ],
         favoriteCharacters: [...state.favoriteCharacters, action.payload],
       };
 
     case CHARACTER_UNBOOKMARKED:
       return {
         ...state,
-        favoriteCharacters: [
-          ...state.favoriteCharacters.filter(
-            (favCharacter) => favCharacter.id !== action.payload
-          ),
-        ],
+        nonHiddenFavoriteCharacters: state.nonHiddenFavoriteCharacters?.filter(
+          (nonHiddenFavCharacter) => nonHiddenFavCharacter.id !== action.payload
+        ),
+        favoriteCharacters: state.favoriteCharacters?.filter(
+          (favCharacter) => favCharacter.id !== action.payload
+        ),
       };
 
     case CHARACTERS_UNBOOKMARKED_ALL:
       return {
         ...state,
         favoriteCharacters: [],
+        nonHiddenFavoriteCharacters: [],
       };
 
     case CHARACTER_HIDDEN:
       return {
         ...state,
+        nonHiddenFavoriteCharacters: state.nonHiddenFavoriteCharacters?.filter(
+          (nonHiddenFavCharacter) =>
+            nonHiddenFavCharacter.id !== action.payload.id
+        ),
+        nonHiddenCharacters: state.nonHiddenCharacters.filter(
+          (character) => character.id !== action.payload.id
+        ),
         hiddenCharacters: [...state.hiddenCharacters, action.payload],
       };
 
@@ -170,6 +208,8 @@ export default function charactersReducer(
       return {
         ...state,
         hiddenCharacters: [],
+        nonHiddenFavoriteCharacters: [...state.favoriteCharacters],
+        nonHiddenCharacters: [...state.characters],
       };
 
     default:
