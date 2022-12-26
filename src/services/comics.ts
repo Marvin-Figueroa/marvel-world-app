@@ -16,7 +16,7 @@ export async function getComicDetail(comicId: number) {
 
 export async function getPaginatedComics(
   pageNumber = 1,
-  pageSize = 10,
+  pageSize = 20,
   search = '',
   format = ''
 ) {
