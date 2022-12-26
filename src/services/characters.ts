@@ -19,7 +19,7 @@ export async function getCharacterDetail(characterId: number) {
 
 export async function getPaginatedCharacters(
   pageNumber = 1,
-  pageSize = 10,
+  pageSize = 20,
   search = '',
   comics = '',
   stories = ''
