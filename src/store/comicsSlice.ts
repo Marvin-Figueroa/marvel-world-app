@@ -1,4 +1,3 @@
-import { AnyAction } from 'redux';
 import { IComic } from '../models/comic';
 
 // Initial State
@@ -11,7 +10,9 @@ interface initialStateType {
   comics: IComic[];
   filters: filtersType;
   favoriteComics: IComic[];
-  hiddenComics: number[];
+  hiddenComics: IComic[];
+  nonHiddenComics: IComic[];
+  nonHiddenFavComics: IComic[];
 }
 
 const initialState: initialStateType = {
@@ -23,6 +24,8 @@ const initialState: initialStateType = {
   },
   favoriteComics: [],
   hiddenComics: [],
+  nonHiddenComics: [],
+  nonHiddenFavComics: [],
 };
 
 // Action types
@@ -35,6 +38,17 @@ const COMIC_UNBOOKMARKED = 'comics/comicUnBookmarked';
 const COMICS_UNBOOKMARKED_ALL = 'comics/comicsUnBookmarkedAll';
 const COMIC_HIDDEN = 'comics/comicHidden';
 const COMICS_EXPOSED_ALL = 'comics/comicsExposedAll';
+
+type ComicActionType =
+  | { type: 'comics/comicsLoaded'; payload: IComic[] }
+  | { type: 'comics/comicsFilteredByFormat'; payload: string }
+  | { type: 'comics/comicsFilteredByTitle'; payload: string }
+  | { type: 'comics/comicsFilteredByPage'; payload: number }
+  | { type: 'comics/comicBookmarked'; payload: IComic }
+  | { type: 'comics/comicUnBookmarked'; payload: number }
+  | { type: 'comics/comicsUnBookmarkedAll' }
+  | { type: 'comics/comicHidden'; payload: IComic }
+  | { type: 'comics/comicsExposedAll' };
 
 // Action Creators
 export function comicsLoaded(comics: IComic[]) {
@@ -85,10 +99,10 @@ export function comicsUnBookmarkedAll() {
   };
 }
 
-export function comicHidden(comicId: number) {
+export function comicHidden(comic: IComic) {
   return {
     type: COMIC_HIDDEN,
-    payload: comicId,
+    payload: comic,
   };
 }
 
@@ -101,11 +115,20 @@ export function comicsExposedAll() {
 // Reducer
 export default function comicsReducer(
   state = initialState,
-  action: AnyAction
+  action: ComicActionType
 ): initialStateType {
   switch (action.type) {
     case COMICS_LOADED:
-      return { ...state, comics: action.payload };
+      return {
+        ...state,
+        comics: action.payload,
+        nonHiddenComics: action.payload.filter(
+          (comic) =>
+            state.hiddenComics.findIndex(
+              (hiddenComic) => comic.id === hiddenComic.id
+            ) === -1
+        ),
+      };
 
     case COMICS_FILTERED_BY_FORMAT:
       return {
@@ -125,12 +148,16 @@ export default function comicsReducer(
     case COMIC_BOOKMARKED:
       return {
         ...state,
+        nonHiddenFavComics: [...state.nonHiddenFavComics, action.payload],
         favoriteComics: [...state.favoriteComics, action.payload],
       };
 
     case COMIC_UNBOOKMARKED:
       return {
         ...state,
+        nonHiddenFavComics: state.nonHiddenFavComics?.filter(
+          (nonHiddenFavComic) => nonHiddenFavComic.id !== action.payload
+        ),
         favoriteComics: [
           ...state.favoriteComics.filter(
             (favComic) => favComic.id !== action.payload
@@ -142,11 +169,18 @@ export default function comicsReducer(
       return {
         ...state,
         favoriteComics: [],
+        nonHiddenFavComics: [],
       };
 
     case COMIC_HIDDEN:
       return {
         ...state,
+        nonHiddenFavComics: state.nonHiddenFavComics?.filter(
+          (nonHiddenFavComic) => nonHiddenFavComic.id !== action.payload.id
+        ),
+        nonHiddenComics: state.nonHiddenComics.filter(
+          (comic) => comic.id !== action.payload.id
+        ),
         hiddenComics: [...state.hiddenComics, action.payload],
       };
 
@@ -154,6 +188,8 @@ export default function comicsReducer(
       return {
         ...state,
         hiddenComics: [],
+        nonHiddenFavComics: [...state.favoriteComics],
+        nonHiddenComics: [...state.comics],
       };
 
     default:
