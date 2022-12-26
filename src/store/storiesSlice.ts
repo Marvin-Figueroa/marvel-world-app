@@ -1,4 +1,3 @@
-import { AnyAction } from 'redux';
 import { IStory } from '../models/story';
 
 // Initial State
@@ -11,7 +10,9 @@ interface initialStateType {
   stories: IStory[];
   filters: filtersType;
   favoriteStories: IStory[];
-  hiddenStories: number[];
+  hiddenStories: IStory[];
+  nonHiddenStories: IStory[];
+  nonHiddenFavStories: IStory[];
 }
 
 const initialState: initialStateType = {
@@ -22,6 +23,8 @@ const initialState: initialStateType = {
   },
   favoriteStories: [],
   hiddenStories: [],
+  nonHiddenStories: [],
+  nonHiddenFavStories: [],
 };
 
 // Action types
@@ -33,6 +36,16 @@ const STORY_UNBOOKMARKED = 'stories/storyUnBookmarked';
 const STORIES_UNBOOKMARKED_ALL = 'stories/storiesUnBookmarkedAll';
 const STORY_HIDDEN = 'stories/storyHidden';
 const STORIES_EXPOSED_ALL = 'stories/storiesExposedAll';
+
+type StoryActionType =
+  | { type: 'stories/storiesLoaded'; payload: IStory[] }
+  | { type: 'stories/storiesFilteredByCharacter'; payload: string }
+  | { type: 'stories/storiesFilteredByPage'; payload: number }
+  | { type: 'stories/storyBookmarked'; payload: IStory }
+  | { type: 'stories/storyUnBookmarked'; payload: number }
+  | { type: 'stories/storiesUnBookmarkedAll' }
+  | { type: 'stories/storyHidden'; payload: IStory }
+  | { type: 'stories/storiesExposedAll' };
 
 // Action Creators
 export function storiesLoaded(stories: IStory[]) {
@@ -76,10 +89,10 @@ export function storiesUnBookmarkedAll() {
   };
 }
 
-export function storyHidden(storyId: number) {
+export function storyHidden(story: IStory) {
   return {
     type: STORY_HIDDEN,
-    payload: storyId,
+    payload: story,
   };
 }
 
@@ -92,11 +105,20 @@ export function storiesExposedAll() {
 // Reducer
 export default function storiesReducer(
   state = initialState,
-  action: AnyAction
+  action: StoryActionType
 ): initialStateType {
   switch (action.type) {
     case STORIES_LOADED:
-      return { ...state, stories: action.payload };
+      return {
+        ...state,
+        stories: action.payload,
+        nonHiddenStories: action.payload.filter(
+          (story) =>
+            state.hiddenStories.findIndex(
+              (hiddenStory) => story.id === hiddenStory.id
+            ) === -1
+        ),
+      };
 
     case STORIES_FILTERED_BY_CHARACTER:
       return {
@@ -110,28 +132,37 @@ export default function storiesReducer(
     case STORY_BOOKMARKED:
       return {
         ...state,
+        nonHiddenFavStories: [...state.nonHiddenFavStories, action.payload],
         favoriteStories: [...state.favoriteStories, action.payload],
       };
 
     case STORY_UNBOOKMARKED:
       return {
         ...state,
-        favoriteStories: [
-          ...state.favoriteStories.filter(
-            (favStory) => favStory.id !== action.payload
-          ),
-        ],
+        nonHiddenFavStories: state.nonHiddenFavStories?.filter(
+          (nonHiddenFavStory) => nonHiddenFavStory.id !== action.payload
+        ),
+        favoriteStories: state.favoriteStories.filter(
+          (favStory) => favStory.id !== action.payload
+        ),
       };
 
     case STORIES_UNBOOKMARKED_ALL:
       return {
         ...state,
         favoriteStories: [],
+        nonHiddenFavStories: [],
       };
 
     case STORY_HIDDEN:
       return {
         ...state,
+        nonHiddenFavStories: state.nonHiddenFavStories?.filter(
+          (nonHiddenFavStory) => nonHiddenFavStory.id !== action.payload.id
+        ),
+        nonHiddenStories: state.nonHiddenStories.filter(
+          (story) => story.id !== action.payload.id
+        ),
         hiddenStories: [...state.hiddenStories, action.payload],
       };
 
@@ -139,6 +170,8 @@ export default function storiesReducer(
       return {
         ...state,
         hiddenStories: [],
+        nonHiddenFavStories: [...state.favoriteStories],
+        nonHiddenStories: [...state.stories],
       };
 
     default:
