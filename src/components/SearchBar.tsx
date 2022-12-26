@@ -20,20 +20,18 @@ const SearchBar = ({ onSubmitSearch, searchFor }: Props) => {
       <label className='form-search__label' htmlFor='search'>
         Search {searchFor}
       </label>
-      <div className='form-search__inputs'>
-        <input
-          className='form-search__input'
-          type='search'
-          name='search'
-          id='search'
-          placeholder='enter a name...'
-          onChange={(e) => {
-            setSearch(e.target.value);
-          }}
-          value={search}
-          maxLength={50}
-        />
-      </div>
+      <input
+        className='form-search__input'
+        type='search'
+        name='search'
+        id='search'
+        placeholder='enter a name...'
+        onChange={(e) => {
+          setSearch(e.target.value);
+        }}
+        value={search}
+        maxLength={50}
+      />
     </div>
   );
 };
