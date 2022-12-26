@@ -20,6 +20,7 @@ function ToggleButton({
       className='like-button'
       title={toggleOn ? 'Remove from bookmarks' : 'Add to bookmarks'}>
       {toggleOn ? showOnToggleOn : showOnToggleOff}
+      {toggleOn ? 'REMOVE BOOKMARK' : 'ADD BOOKMARK'}
     </button>
   );
 }
