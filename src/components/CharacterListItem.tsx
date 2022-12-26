@@ -6,7 +6,8 @@ import ToggleButton from './ToggleButton';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../store/charactersSlice';
 import { RootState } from '../store/store';
-import { FaBookmark, FaRegBookmark } from 'react-icons/fa';
+import { FaBookmark, FaEyeSlash, FaRegBookmark } from 'react-icons/fa';
+import Button from './Button';
 
 type Props = {
   character: ICharacter;
@@ -14,7 +15,7 @@ type Props = {
 
 function CharacterListItem({ character }: Props) {
   const favCharacters = useSelector(
-    (state: RootState) => state.characters.favoriteCharacters
+    (state: RootState) => state.characters.nonHiddenFavoriteCharacters
   );
   const [isFavCharacter, setIsFavCharacter] = useState(
     () =>
@@ -45,14 +46,25 @@ function CharacterListItem({ character }: Props) {
       />
       <div className='character-item__footer'>
         <p className='character-item__name'>
-          <Link to={`/characters/${character.id}`}>{character.name}</Link>
+          <Link to={`/characters/${character.id}`}>
+            {character.name.toUpperCase()}
+          </Link>
         </p>
-        <ToggleButton
-          toggleOn={isFavCharacter}
-          onToggle={handleClick}
-          showOnToggleOn={<FaBookmark />}
-          showOnToggleOff={<FaRegBookmark />}
-        />
+        <div className='character-item__buttons'>
+          <ToggleButton
+            toggleOn={isFavCharacter}
+            onToggle={handleClick}
+            showOnToggleOn={<FaBookmark />}
+            showOnToggleOff={<FaRegBookmark />}
+          />
+          <Button
+            onClick={() => {
+              dispatch(actions.characterHidden(character));
+            }}>
+            <FaEyeSlash />
+            HIDE ITEM
+          </Button>
+        </div>
       </div>
     </article>
   );
