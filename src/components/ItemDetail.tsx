@@ -21,7 +21,7 @@ function ItemDetail({ thumbnail, title, description }: Props) {
           alt={title}
         />
         <div className='item__text'>
-          <h2 className='item__title'>{title}</h2>
+          <h2 className='item__title'>{title?.toUpperCase()}</h2>
           <p className='item__description'>
             {description || 'No description available.'}
           </p>
