@@ -15,8 +15,13 @@
   border-radius: 10px;
   cursor: pointer;
 
-  &:hover {
+  &:not(:disabled):hover {
     background-color: rgb(249, 23, 68);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
   }
 }
 
