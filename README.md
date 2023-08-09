@@ -1,5 +1,4 @@
-# Homework Week 8
-
+# Marvel World App
 ## Description
 
 The project consist of consuming the Marvel API and create pages to show the master/detail of the Characters, Comics and Stories resources. Add filtering functionality in every resource displayed and the possibility to bookmark/unbookmark every resource item, as well as the possibility to hide/expose every resource item from all pages.
